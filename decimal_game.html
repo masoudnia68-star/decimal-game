@@ -1,0 +1,2258 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#1565c0" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="شهربازی اعشاری" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <title>شهربازی عددهای اعشاری - نسخه حرفه‌ای</title>
+  <style>
+    * { box-sizing: border-box; font-family: Tahoma, Arial, sans-serif; }
+
+    :root {
+      --blue: #1565c0;
+      --sky: #d9f3ff;
+      --green: #26a69a;
+      --orange: #ff9800;
+      --purple: #7e57c2;
+      --red: #ef5350;
+      --dark: #263238;
+      --card: rgba(255,255,255,0.92);
+      --shadow: 0 18px 42px rgba(38, 50, 56, 0.18);
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      direction: rtl;
+      text-align: right;
+      color: var(--dark);
+      background:
+        radial-gradient(circle at 15% 15%, rgba(255, 235, 59, 0.35), transparent 25%),
+        radial-gradient(circle at 85% 20%, rgba(129, 212, 250, 0.5), transparent 26%),
+        radial-gradient(circle at 50% 85%, rgba(102, 187, 106, 0.4), transparent 32%),
+        linear-gradient(135deg, #b3e5fc 0%, #fff8c8 48%, #c8f7d2 100%);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        radial-gradient(circle, rgba(255,255,255,.55) 2px, transparent 3px),
+        radial-gradient(circle, rgba(21,101,192,.12) 2px, transparent 3px);
+      background-size: 38px 38px, 54px 54px;
+      opacity: 0.55;
+      z-index: -1;
+    }
+
+    .math-ltr {
+      direction: ltr;
+      unicode-bidi: isolate;
+      text-align: center;
+      font-family: Tahoma, Arial, sans-serif;
+    }
+
+    /* صفحه شروع */
+    .start-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+    }
+
+    .start-card {
+      width: min(820px, 96%);
+      background: rgba(255, 255, 255, 0.9);
+      border: 5px solid rgba(255,255,255,0.95);
+      border-radius: 36px;
+      box-shadow: var(--shadow);
+      padding: 34px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(8px);
+    }
+
+    .start-card::before {
+      content: "🎡";
+      position: absolute;
+      top: -18px;
+      right: 24px;
+      font-size: 96px;
+      opacity: 0.13;
+      transform: rotate(8deg);
+    }
+
+    .start-card::after {
+      content: "🚂";
+      position: absolute;
+      bottom: -12px;
+      left: 28px;
+      font-size: 86px;
+      opacity: 0.13;
+      transform: rotate(-8deg);
+    }
+
+    .app-logo {
+      width: 118px;
+      height: 118px;
+      margin: 0 auto 14px;
+      border-radius: 34px;
+      background: linear-gradient(135deg, #1565c0, #26a69a);
+      border: 5px solid white;
+      box-shadow: 0 12px 24px rgba(21,101,192,.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 58px;
+      position: relative;
+    }
+
+    .app-logo span {
+      filter: drop-shadow(0 5px 4px rgba(0,0,0,.18));
+    }
+
+    .start-card h1 {
+      margin: 0 0 12px;
+      color: var(--blue);
+      font-size: clamp(28px, 5vw, 46px);
+    }
+
+    .start-subtitle {
+      line-height: 2;
+      color: #455a64;
+      font-size: 17px;
+      margin: 0 auto 18px;
+      max-width: 640px;
+    }
+
+    .designer {
+      background: linear-gradient(135deg, #fff8e1, #fff3e0);
+      border: 3px solid #ffcc80;
+      border-radius: 24px;
+      padding: 14px;
+      margin: 18px auto;
+      line-height: 2;
+      font-weight: bold;
+      color: #5d4037;
+    }
+
+    .name-box {
+      margin-top: 20px;
+      background: linear-gradient(135deg, #e3f2fd, #e0f7fa);
+      border: 3px solid #90caf9;
+      border-radius: 26px;
+      padding: 18px;
+    }
+
+    .name-box label {
+      display: block;
+      color: #0d47a1;
+      font-weight: bold;
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    .name-box input {
+      width: min(440px, 100%);
+      border: 3px solid #42a5f5;
+      border-radius: 18px;
+      padding: 14px 16px;
+      font-size: 18px;
+      text-align: center;
+      outline: none;
+      background: #fff;
+      box-shadow: inset 0 3px 8px rgba(0,0,0,.06);
+    }
+
+    .start-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 18px;
+    }
+
+    .big-btn {
+      border: none;
+      border-radius: 20px;
+      color: white;
+      padding: 14px 30px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: .18s;
+      box-shadow: 0 7px 0 rgba(0,0,0,.17);
+    }
+
+    .big-btn:hover { transform: translateY(-3px); filter: brightness(1.04); }
+    .big-btn:active { transform: translateY(2px); box-shadow: none; }
+
+    .start-btn { background: linear-gradient(135deg, #26a69a, #00897b); }
+    .sound-test-btn { background: linear-gradient(135deg, #7e57c2, #5e35b1); }
+
+    .sound-status {
+      display: inline-block;
+      margin-top: 10px;
+      background: #e8f5e9;
+      color: #1b5e20;
+      border: 2px solid #66bb6a;
+      border-radius: 999px;
+      padding: 7px 14px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .game-area { display: none; }
+
+    .container {
+      width: min(1220px, 96%);
+      margin: 16px auto;
+      background: rgba(255,255,255,0.78);
+      border-radius: 34px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+      border: 4px solid rgba(255,255,255,0.86);
+      backdrop-filter: blur(9px);
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: 1.2fr .9fr;
+      gap: 14px;
+      align-items: stretch;
+      padding-bottom: 14px;
+      border-bottom: 3px dashed #90caf9;
+    }
+
+    .brand-card, .score-card-wrap {
+      background: var(--card);
+      border-radius: 26px;
+      padding: 16px;
+      border: 2px solid rgba(255,255,255,.85);
+      box-shadow: 0 8px 18px rgba(0,0,0,.08);
+    }
+
+    .brand-card h1 {
+      margin: 0;
+      color: var(--blue);
+      font-size: clamp(21px, 3.6vw, 36px);
+    }
+
+    .brand-card p {
+      margin: 8px 0 0;
+      line-height: 1.8;
+      color: #455a64;
+      font-size: 15px;
+    }
+
+    .player-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 10px;
+      background: #e8f5e9;
+      border: 2px solid #66bb6a;
+      color: #1b5e20;
+      border-radius: 999px;
+      padding: 7px 14px;
+      font-weight: bold;
+    }
+
+    .score-card-wrap {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, #fff8e1, #ffecb3);
+      border: 2px solid #ffcc80;
+      border-radius: 18px;
+      text-align: center;
+      padding: 10px 8px;
+      box-shadow: 0 4px 0 #ffb74d;
+      font-weight: bold;
+      min-height: 75px;
+    }
+
+    .stat-card span {
+      display: block;
+      margin-top: 5px;
+      font-size: 22px;
+      color: #e65100;
+    }
+
+    .audio-controls {
+      grid-column: 1 / -1;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 4px;
+    }
+
+    .mini-btn {
+      border: none;
+      border-radius: 999px;
+      padding: 9px 13px;
+      font-weight: bold;
+      cursor: pointer;
+      color: white;
+      background: #607d8b;
+      transition: .16s;
+    }
+
+    .mini-btn.music { background: #7e57c2; }
+    .mini-btn.sound { background: #26a69a; }
+    .mini-btn:hover { transform: translateY(-2px); }
+
+    .progress-section {
+      margin: 16px 0;
+      background: rgba(227, 242, 253, .92);
+      border: 3px solid #90caf9;
+      border-radius: 26px;
+      padding: 14px;
+    }
+
+    .progress-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      color: #0d47a1;
+      font-weight: bold;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .progress-bar {
+      height: 18px;
+      background: #bbdefb;
+      border-radius: 999px;
+      overflow: hidden;
+      border: 2px solid #64b5f6;
+      box-shadow: inset 0 2px 6px rgba(0,0,0,.12);
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #26a69a, #66bb6a, #ffca28);
+      transition: width .35s ease;
+      border-radius: 999px;
+    }
+
+    .map-wrap {
+      margin-top: 12px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .map-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-width: 1280px;
+      padding: 6px 2px;
+    }
+
+    .station {
+      min-width: 88px;
+      width: 88px;
+      height: 88px;
+      border-radius: 28px;
+      background: #fff;
+      border: 4px solid #bbdefb;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #607d8b;
+      font-weight: bold;
+      text-align: center;
+      transition: .2s;
+      padding: 6px;
+      position: relative;
+    }
+
+    .station .icon {
+      font-size: 26px;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .station small {
+      font-size: 11px;
+      line-height: 1.3;
+    }
+
+    .station .mini-stars {
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      white-space: nowrap;
+      font-size: 12px;
+      background: #fffde7;
+      border-radius: 999px;
+      padding: 1px 5px;
+      border: 1px solid #ffd54f;
+    }
+
+    .station.active {
+      background: #ffecb3;
+      border-color: var(--orange);
+      color: #bf360c;
+      transform: scale(1.05);
+      box-shadow: 0 0 0 7px rgba(255,152,0,0.18);
+    }
+
+    .station.done {
+      background: #c8e6c9;
+      border-color: #43a047;
+      color: #1b5e20;
+    }
+
+    .connector {
+      min-width: 35px;
+      width: 35px;
+      border-top: 5px dotted #64b5f6;
+    }
+
+    .main {
+      display: grid;
+      grid-template-columns: 1.02fr 2fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .npc-card {
+      background: linear-gradient(180deg, rgba(255,243,224,.96), rgba(255,248,225,.9));
+      border: 3px solid #ffcc80;
+      border-radius: 30px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 450px;
+      box-shadow: inset 0 -8px 0 rgba(255,183,77,0.25), 0 8px 20px rgba(0,0,0,.08);
+    }
+
+    .npc-face {
+      width: 124px;
+      height: 124px;
+      border-radius: 38px;
+      background: linear-gradient(135deg, #ffe0b2, #fff8e1);
+      border: 5px solid #fb8c00;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 66px;
+      margin-bottom: 14px;
+      animation: float 2.4s ease-in-out infinite;
+      box-shadow: 0 10px 18px rgba(251,140,0,.18);
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(-1deg); }
+      50% { transform: translateY(-8px) rotate(1deg); }
+    }
+
+    .npc-name {
+      background: linear-gradient(135deg, #fb8c00, #f57c00);
+      color: #fff;
+      border-radius: 999px;
+      padding: 7px 20px;
+      font-weight: bold;
+      margin-bottom: 12px;
+      box-shadow: 0 4px 0 rgba(230,81,0,.25);
+    }
+
+    .npc-message {
+      width: 100%;
+      background: #fff;
+      border-radius: 20px;
+      border: 2px solid #ffe0b2;
+      padding: 14px;
+      line-height: 1.9;
+      text-align: center;
+      min-height: 128px;
+      margin-bottom: 14px;
+      box-shadow: inset 0 2px 8px rgba(0,0,0,.04);
+    }
+
+    .stage-score-preview {
+      width: 100%;
+      background: #fffaf1;
+      border: 2px dashed #ffcc80;
+      border-radius: 20px;
+      padding: 13px;
+      line-height: 1.9;
+      font-size: 14px;
+    }
+
+    .stage-score-preview strong { color: #e65100; }
+
+    .card {
+      background: linear-gradient(180deg, rgba(241,248,233,.96), rgba(255,255,255,.9));
+      border: 3px solid #aed581;
+      border-radius: 30px;
+      padding: 20px;
+      min-height: 450px;
+      box-shadow: 0 8px 20px rgba(0,0,0,.08);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      background: rgba(174,213,129,.22);
+      top: -70px;
+      left: -60px;
+      pointer-events: none;
+    }
+
+    .badge-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 1;
+    }
+
+    .badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #33691e, #689f38);
+      color: #fff;
+      padding: 8px 15px;
+      border-radius: 999px;
+      font-weight: bold;
+      box-shadow: 0 4px 0 rgba(51,105,30,.25);
+    }
+
+    .stage-stars-live {
+      color: #ffb300;
+      font-size: 22px;
+      text-shadow: 0 2px 0 rgba(0,0,0,.12);
+      background: #fffde7;
+      border: 2px solid #ffe082;
+      border-radius: 999px;
+      padding: 5px 12px;
+    }
+
+    .card h2 {
+      margin: 14px 0 10px;
+      color: #33691e;
+      font-size: 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .question-text {
+      line-height: 1.95;
+      font-size: 17px;
+      margin-bottom: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .visual {
+      min-height: 145px;
+      margin: 18px 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .options {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-top: 8px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .option-btn {
+      border: none;
+      border-radius: 20px;
+      background: linear-gradient(180deg, #fff, #e3f2fd);
+      border: 3px solid #64b5f6;
+      color: #0d47a1;
+      padding: 14px 12px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: .18s;
+      box-shadow: 0 5px 0 #42a5f5;
+      line-height: 1.8;
+      text-align: center;
+      unicode-bidi: isolate;
+    }
+
+    .option-btn:hover {
+      transform: translateY(-3px);
+      filter: brightness(1.03);
+    }
+
+    .option-btn:active {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 #42a5f5;
+    }
+
+    .option-btn.correct {
+      background: linear-gradient(180deg, #e8f5e9, #c8e6c9);
+      border-color: #2e7d32;
+      color: #1b5e20;
+      box-shadow: 0 5px 0 #43a047;
+    }
+
+    .option-btn.wrong {
+      background: linear-gradient(180deg, #ffebee, #ffcdd2);
+      border-color: #c62828;
+      color: #b71c1c;
+      box-shadow: 0 5px 0 #ef5350;
+      animation: shake .24s linear 2;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(4px); }
+      75% { transform: translateX(-4px); }
+    }
+
+    .option-btn:disabled {
+      opacity: .9;
+      cursor: not-allowed;
+    }
+
+    .feedback {
+      display: none;
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 20px;
+      line-height: 1.9;
+      font-weight: bold;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .feedback.success {
+      display: block;
+      background: #e8f5e9;
+      border: 2px solid #43a047;
+      color: #1b5e20;
+    }
+
+    .feedback.error {
+      display: block;
+      background: #ffebee;
+      border: 2px solid #e53935;
+      color: #b71c1c;
+    }
+
+    .award-box {
+      display: none;
+      margin-top: 12px;
+      background: #fffde7;
+      border: 2px solid #ffd54f;
+      border-radius: 20px;
+      padding: 12px;
+      text-align: center;
+      font-weight: bold;
+      color: #795548;
+      line-height: 1.9;
+    }
+
+    .award-box.show { display: block; }
+
+    .award-stars {
+      font-size: 32px;
+      color: #ffb300;
+      display: block;
+      margin-bottom: 2px;
+      text-shadow: 0 2px 0 rgba(0,0,0,.12);
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .control-btn {
+      border: none;
+      border-radius: 18px;
+      padding: 12px 20px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: .18s;
+    }
+
+    .hint-btn {
+      background: linear-gradient(135deg, #7e57c2, #5e35b1);
+      color: #fff;
+      box-shadow: 0 5px 0 #4527a0;
+    }
+
+    .next-btn {
+      display: none;
+      background: linear-gradient(135deg, #26a69a, #00897b);
+      color: #fff;
+      box-shadow: 0 5px 0 #00695c;
+    }
+
+    .restart-btn {
+      background: linear-gradient(135deg, #ffca28, #f9a825);
+      color: #4e342e;
+      box-shadow: 0 5px 0 #f57f17;
+    }
+
+    .control-btn:hover {
+      transform: translateY(-3px);
+      filter: brightness(1.03);
+    }
+
+    .control-btn:active {
+      transform: translateY(2px);
+      box-shadow: none;
+    }
+
+    .hint-panel {
+      display: none;
+      margin-top: 16px;
+      background: #ede7f6;
+      border: 3px solid #9575cd;
+      border-radius: 24px;
+      padding: 14px;
+      color: #311b92;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hint-panel.show { display: block; }
+
+    .hint-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .hint-level {
+      background: #673ab7;
+      color: #fff;
+      padding: 7px 15px;
+      border-radius: 999px;
+      font-weight: bold;
+    }
+
+    .close-hint {
+      border: none;
+      background: #d32f2f;
+      color: #fff;
+      border-radius: 14px;
+      padding: 8px 14px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .hint-text {
+      background: #fff;
+      border: 2px solid #d1c4e9;
+      border-radius: 18px;
+      padding: 14px;
+      line-height: 2;
+      min-height: 78px;
+      font-size: 16px;
+    }
+
+    .hint-nav {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .hint-nav button {
+      border: none;
+      background: #fff;
+      border: 2px solid #7e57c2;
+      color: #512da8;
+      border-radius: 14px;
+      padding: 8px 16px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .hint-nav button:disabled {
+      opacity: .45;
+      cursor: not-allowed;
+    }
+
+    .report {
+      display: none;
+      margin-top: 22px;
+      background: #fff;
+      border: 3px solid #4db6ac;
+      border-radius: 26px;
+      padding: 18px;
+      line-height: 2;
+      position: relative;
+      z-index: 1;
+    }
+
+    .report.show { display: block; }
+
+    .report h2 {
+      margin: 0 0 8px;
+      color: #00695c;
+      text-align: center;
+      font-size: 20px;
+    }
+
+    .email-report-box {
+      margin-top: 12px;
+      text-align: center;
+      background: #f3e5f5;
+      border: 2px solid #ab47bc;
+      border-radius: 18px;
+      padding: 10px;
+      line-height: 1.8;
+    }
+
+    .email-report-btn {
+      display: inline-block;
+      margin-top: 6px;
+      background: linear-gradient(135deg, #7e57c2, #1565c0);
+      color: #fff;
+      border: none;
+      text-decoration: none;
+      border-radius: 999px;
+      padding: 11px 20px;
+      font-weight: bold;
+      box-shadow: 0 5px 0 rgba(0,0,0,.18);
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .email-report-btn:active {
+      transform: translateY(2px);
+      box-shadow: none;
+    }
+
+    .learn-more-box {
+      margin-top: 12px;
+      text-align: center;
+      background: #e8f5e9;
+      border: 2px solid #66bb6a;
+      border-radius: 18px;
+      padding: 10px;
+      line-height: 1.8;
+    }
+
+    .learn-more-btn {
+      display: inline-block;
+      margin-top: 6px;
+      background: linear-gradient(135deg, #1565c0, #26a69a);
+      color: #fff;
+      text-decoration: none;
+      border-radius: 999px;
+      padding: 10px 18px;
+      font-weight: bold;
+      box-shadow: 0 5px 0 rgba(0,0,0,.18);
+    }
+
+    .learn-more-btn:active {
+      transform: translateY(2px);
+      box-shadow: none;
+    }
+
+    .report-player-name {
+      background: #e3f2fd;
+      border: 2px solid #64b5f6;
+      color: #0d47a1;
+      border-radius: 16px;
+      padding: 7px;
+      margin: 8px 0;
+      text-align: center;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .screenshot-note {
+      background: #fff3e0;
+      border: 2px solid #ffb74d;
+      color: #5d4037;
+      border-radius: 16px;
+      padding: 8px;
+      text-align: center;
+      font-weight: bold;
+      margin: 8px 0 10px;
+      line-height: 1.7;
+      font-size: 13px;
+    }
+
+    .report-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .report-item {
+      background: #e0f2f1;
+      border-radius: 14px;
+      padding: 7px 5px;
+      text-align: center;
+      font-weight: bold;
+      border: 1px solid #80cbc4;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .report-item span {
+      display: block;
+      margin-top: 4px;
+      color: #004d40;
+      font-size: 16px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 14px;
+      font-size: 12px;
+      line-height: 1.45;
+      table-layout: fixed;
+    }
+
+    th, td {
+      border: 1px solid #b2dfdb;
+      padding: 5px 4px;
+      text-align: center;
+      vertical-align: middle;
+      word-break: break-word;
+    }
+
+    th {
+      background: #00897b;
+      color: #fff;
+    }
+
+    td { background: #f1fffd; }
+
+    /* نمایش‌های ریاضی */
+    .train {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      direction: ltr;
+      unicode-bidi: isolate;
+    }
+
+    .train-head-right {
+      direction: rtl;
+      unicode-bidi: isolate;
+    }
+
+    .engine, .wagon {
+      height: 76px;
+      min-width: 90px;
+      border-radius: 18px 18px 14px 14px;
+      border: 4px solid #37474f;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      font-weight: bold;
+      position: relative;
+      box-shadow: 0 7px 0 rgba(0,0,0,.15);
+    }
+
+    .engine { background: #ef5350; color: #fff; }
+    .wagon { background: #81d4fa; color: #0d47a1; }
+    .unknown { background: #fff59d; color: #f57f17; }
+
+    .engine::after, .wagon::after {
+      content: "";
+      position: absolute;
+      bottom: -16px;
+      width: 18px;
+      height: 18px;
+      background: #263238;
+      border-radius: 50%;
+      box-shadow: 44px 0 0 #263238;
+    }
+
+    .small-connector {
+      width: 20px;
+      height: 7px;
+      background: #455a64;
+      border-radius: 10px;
+    }
+
+    .arrow-connector {
+      min-width: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: #f57c00;
+      font-weight: bold;
+      text-shadow: 0 2px 0 rgba(0,0,0,.12);
+    }
+
+    .bridge-box, .shop-box, .pond-box, .gate-box, .garden-box, .wheel-box, .house-box, .line-box, .final-box {
+      width: min(640px, 100%);
+      background: #fff;
+      border-radius: 26px;
+      padding: 18px;
+      text-align: center;
+      box-shadow: 0 9px 0 rgba(0,0,0,.08);
+    }
+
+    .bridge-box { border: 4px solid #4fc3f7; background: #e1f5fe; }
+    .shop-box { border: 4px solid #ffcc80; background: #fff8e1; }
+    .pond-box { border: 4px solid #4dd0e1; background: #e0f7fa; }
+    .gate-box { border: 4px solid #ce93d8; background: #f3e5f5; }
+    .garden-box { border: 4px solid #81c784; background: #f1f8e9; }
+    .wheel-box { border: 4px solid #ffab91; background: #fff3e0; }
+    .house-box { border: 4px solid #a5d6a7; background: #f1f8e9; }
+    .line-box { border: 4px solid #90caf9; background: #e3f2fd; }
+    .final-box { border: 4px solid #ffd54f; background: #fffde7; }
+
+    .bridge {
+      height: 52px;
+      border: 8px solid #795548;
+      border-top-left-radius: 100px;
+      border-top-right-radius: 100px;
+      border-bottom: none;
+      margin: 8px auto 16px;
+      width: 80%;
+    }
+
+    .compare-display, .equiv-display, .challenge-display {
+      display: flex;
+      direction: ltr;
+      unicode-bidi: isolate;
+      justify-content: center;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+      font-size: 32px;
+      font-weight: bold;
+      color: #01579b;
+    }
+
+    .blank {
+      min-width: 76px;
+      min-height: 52px;
+      border-radius: 16px;
+      background: #fff59d;
+      border: 3px dashed #f9a825;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #f57f17;
+      padding: 6px 10px;
+      direction: ltr;
+      unicode-bidi: isolate;
+    }
+
+    .shop-items, .pond-items {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .shop-item, .fish-card {
+      background: #fff;
+      border: 3px solid #ffb74d;
+      border-radius: 18px;
+      padding: 12px 18px;
+      min-width: 118px;
+      font-weight: bold;
+      box-shadow: 0 5px 0 rgba(255,183,77,.22);
+    }
+
+    .fish-card {
+      border-color: #4dd0e1;
+      min-width: 110px;
+      box-shadow: 0 5px 0 rgba(77,208,225,.22);
+    }
+
+    .emoji {
+      display: block;
+      font-size: 34px;
+      margin-bottom: 6px;
+    }
+
+    .sum-line, .sub-line {
+      display: inline-block;
+      direction: ltr;
+      unicode-bidi: isolate;
+      font-size: 30px;
+      font-weight: bold;
+      color: #e65100;
+      background: #fff;
+      border-radius: 18px;
+      padding: 10px 22px;
+      border: 3px dashed #ffb300;
+    }
+
+    .number-line {
+      width: 90%;
+      margin: 12px auto;
+      position: relative;
+      height: 100px;
+      direction: ltr;
+    }
+
+    .number-line .base {
+      position: absolute;
+      top: 42px;
+      left: 0;
+      right: 0;
+      border-top: 6px solid #1976d2;
+    }
+
+    .tick {
+      position: absolute;
+      top: 29px;
+      width: 3px;
+      height: 30px;
+      background: #0d47a1;
+      transform: translateX(-50%);
+    }
+
+    .tick-label {
+      position: absolute;
+      top: 62px;
+      transform: translateX(-50%);
+      font-weight: bold;
+      color: #0d47a1;
+      font-size: 15px;
+      direction: ltr;
+    }
+
+    .point {
+      position: absolute;
+      top: 8px;
+      transform: translateX(-50%);
+      text-align: center;
+      color: #c62828;
+      font-weight: bold;
+      font-size: 18px;
+      direction: rtl;
+    }
+
+    .point .dot {
+      width: 16px;
+      height: 16px;
+      background: #ef5350;
+      border-radius: 50%;
+      margin: 0 auto 4px;
+      border: 2px solid #b71c1c;
+    }
+
+    .wheel-row, .garden-row {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .digit-card, .flower {
+      background: #fff;
+      border-radius: 18px;
+      padding: 12px 16px;
+      border: 3px solid #ffab91;
+      min-width: 110px;
+      font-weight: bold;
+      box-shadow: 0 5px 0 rgba(255,171,145,.22);
+    }
+
+    .flower {
+      border-color: #81c784;
+      min-width: 100px;
+      box-shadow: 0 5px 0 rgba(129,199,132,.22);
+    }
+
+    .gate {
+      font-size: 56px;
+      margin-bottom: 10px;
+    }
+
+    .final-stars {
+      font-size: 58px;
+      margin-bottom: 10px;
+    }
+
+    .confetti {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      top: -10px;
+      z-index: 9999;
+      pointer-events: none;
+      opacity: .95;
+      animation: fall linear forwards;
+    }
+
+    @keyframes fall {
+      to {
+        transform: translateY(110vh) rotate(720deg);
+        opacity: .2;
+      }
+    }
+
+    @media (max-width: 940px) {
+      .topbar { grid-template-columns: 1fr; }
+      .main { grid-template-columns: 1fr; }
+      .report-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 640px) {
+      .container { padding: 12px; border-radius: 24px; }
+      .options { grid-template-columns: 1fr; }
+      .score-card-wrap { grid-template-columns: repeat(2, 1fr); }
+      .report-grid { grid-template-columns: 1fr; }
+      .engine, .wagon { min-width: 78px; height: 68px; font-size: 22px; }
+      .compare-display, .equiv-display, .challenge-display, .sum-line, .sub-line { font-size: 24px; }
+      .number-line { width: 100%; }
+      .start-card { padding: 22px; }
+      .stat-card { min-width: auto; }
+    }
+  </style>
+</head>
+<body>
+  <section class="start-screen" id="startScreen">
+    <div class="start-card">
+      <div class="app-logo"><span>🎡</span></div>
+      <h1>شهربازی عددهای اعشاری</h1>
+      <p class="start-subtitle">بازی آموزشی ۱۰ مرحله‌ای برای یادگیری دنباله، مقایسه، محور، ارزش مکانی، جمع و تفریق اعداد اعشاری</p>
+
+      <div class="designer">
+        طراح بازی:<br>
+        مهناز مسعودنیا
+      </div>
+
+      <div class="name-box">
+        <label for="playerNameInput">نام و نام خانوادگی بازیکن را وارد کن:</label>
+        <input id="playerNameInput" type="text" placeholder="مثلاً: علی احمدی" />
+        <div class="start-actions">
+          <button class="big-btn start-btn" onclick="startGame()">شروع بازی 🎮</button>
+          <button class="big-btn sound-test-btn" onclick="unlockAudioManually()">فعال‌سازی صدا 🔊</button>
+          <button class="big-btn sound-test-btn" onclick="toggleMusicFromStart()">موسیقی روشن/خاموش 🎵</button>
+        </div>
+        <div id="installBanner" style="display:none;margin-top:12px;background:linear-gradient(135deg,#e8f5e9,#c8e6c9);border:2px solid #43a047;border-radius:18px;padding:12px;text-align:center;">
+          <strong style="color:#1b5e20;">📲 نصب بازی روی موبایل:</strong><br>
+          <button class="big-btn start-btn" style="margin-top:8px;font-size:15px;padding:10px 22px;" onclick="installApp()">نصب اپلیکیشن روی گوشی 📱</button>
+        </div>
+        <div style="margin-top:10px;background:#e3f2fd;border:2px solid #90caf9;border-radius:16px;padding:10px;font-size:13px;color:#0d47a1;line-height:1.8;">
+          <strong>📱 راهنمای نصب روی موبایل (بدون این دکمه):</strong><br>
+          در <strong>Chrome اندروید:</strong> منوی سه‌نقطه ← «افزودن به صفحه اصلی»<br>
+          در <strong>Safari آیفون:</strong> دکمه اشتراک‌گذاری ← «افزودن به صفحه خانگی»
+        </div>
+        <div class="sound-status" id="soundStatus">وضعیت صدا: هنوز فعال نشده</div>
+      </div>
+    </div>
+  </section>
+
+  <main class="container game-area" id="gameArea">
+    <section class="topbar">
+      <div class="brand-card">
+        <h1>شهربازی عددهای اعشاری</h1>
+        <p>۱۰ بازی کوچک را به‌ترتیب انجام بده، امتیاز بگیر، ستاره جمع کن و در پایان گزارش کامل عملکردت را ببین.</p>
+        <span class="player-chip" id="playerChip">👤 بازیکن: -</span>
+      </div>
+
+      <div class="score-card-wrap">
+        <div class="stat-card">مرحله<span id="stageCount">۱</span></div>
+        <div class="stat-card">امتیاز کل<span id="totalScoreView">۰</span></div>
+        <div class="stat-card">تلاش مرحله<span id="attemptCount">۰</span></div>
+        <div class="stat-card">راهنما مرحله<span id="hintCount">۰</span></div>
+        <div class="audio-controls">
+          <button class="mini-btn music" onclick="toggleMusic()">🎵 موسیقی</button>
+          <button class="mini-btn sound" onclick="toggleSound()">🔊 صدا</button>
+          <button class="mini-btn sound" onclick="testSound()">🔈 تست صدا</button>
+          <button class="mini-btn" onclick="restartGame()">🔄 شروع دوباره</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="progress-section">
+      <div class="progress-title">
+        <span>نقشه خط‌چین شهربازی</span>
+        <span id="progressText">پیشرفت: ۰٪</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="map-wrap">
+        <div class="map-row" id="mapRow"></div>
+      </div>
+    </section>
+
+    <section class="main">
+      <aside class="npc-card">
+        <div class="npc-face" id="npcFace">🤓</div>
+        <div class="npc-name" id="npcName">دانا</div>
+        <div class="npc-message" id="npcMessage">سلام! من دانا هستم. بیا بازی‌های شهربازی را یکی‌یکی انجام بدهیم.</div>
+        <div class="stage-score-preview">
+          <strong>قانون ستاره‌ها:</strong><br>
+          ⭐⭐⭐ پاسخ درست در تلاش اول بدون راهنما<br>
+          ⭐⭐ پاسخ درست با یک راهنما یا دو تلاش<br>
+          ⭐ پاسخ درست پس از تلاش بیشتر<br>
+          هر مرحله بین ۴۰ تا ۱۰۰ امتیاز دارد.
+        </div>
+      </aside>
+
+      <section class="card">
+        <div class="badge-row">
+          <div class="badge" id="stageBadge">مرحله ۱ از ۱۰</div>
+          <div class="stage-stars-live" id="stageStarsLive">☆☆☆</div>
+        </div>
+
+        <h2 id="questionTitle"></h2>
+        <div class="question-text" id="questionText"></div>
+
+        <div class="visual" id="visualBox"></div>
+
+        <div class="options" id="optionsBox"></div>
+
+        <div class="feedback" id="feedbackBox"></div>
+
+        <div class="award-box" id="awardBox">
+          <span class="award-stars" id="awardStars">⭐⭐⭐</span>
+          <span id="awardText">امتیاز این مرحله: ۱۰۰</span>
+        </div>
+
+        <div class="controls">
+          <button class="control-btn hint-btn" onclick="openHint()">راهنما 💡</button>
+          <button class="control-btn next-btn" id="nextBtn" onclick="goNext()">مرحله بعد</button>
+        </div>
+
+        <div class="hint-panel" id="hintPanel">
+          <div class="hint-header">
+            <div class="hint-level" id="hintLevel">راهنمای سطح ۱</div>
+            <button class="close-hint" onclick="closeHint()">بستن</button>
+          </div>
+          <div class="hint-text" id="hintText"></div>
+          <div class="hint-nav">
+            <button id="prevHintBtn" onclick="prevHint()">قبلی</button>
+            <button id="nextHintNavBtn" onclick="nextHint()">بعدی</button>
+          </div>
+        </div>
+
+        <div class="report" id="reportBox">
+          <h2 id="reportTitle">گزارش نهایی عملکرد</h2>
+          <div class="screenshot-note">
+            لطفاً از صفحه نتایج اسکرین‌شات بگیر و برای معلم خود ارسال کن.
+          </div>
+          <div class="report-grid">
+            <div class="report-item">کل مرحله‌ها<span>۱۰</span></div>
+            <div class="report-item">مرحله‌های کامل‌شده<span id="reportCompleted">۰</span></div>
+            <div class="report-item">کل امتیاز<span id="reportScore">۰</span></div>
+            <div class="report-item">کل ستاره‌ها<span id="reportStars">۰</span></div>
+            <div class="report-item">کل تلاش‌ها<span id="reportAttempts">۰</span></div>
+          </div>
+
+          <div class="report-player-name" id="reportPlayerName"></div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>مرحله</th>
+                <th>تلاش</th>
+                <th>راهنما</th>
+                <th>امتیاز</th>
+                <th>ستاره</th>
+              </tr>
+            </thead>
+            <tbody id="reportTable"></tbody>
+          </table>
+
+
+          <div class="email-report-box">
+            <strong>ارسال کارنامه بازی به معلم:</strong><br>
+            <div style="font-size:13px;margin:6px 0;color:#4a148c;line-height:1.8;">
+              📱 <strong>در موبایل:</strong> دکمه «ارسال ایمیل» را بزن تا اپ ایمیل گوشی باز شود.<br>
+              💻 <strong>در کامپیوتر:</strong> Gmail باز می‌شود. اگر باز نشد، متن کارنامه را کپی کن.
+            </div>
+            <button class="email-report-btn" onclick="sendReportEmail()">
+              ارسال کارنامه به masoudnia68@gmail.com 📧
+            </button>
+            <button class="email-report-btn" onclick="copyReportToClipboard()" style="background:linear-gradient(135deg,#26a69a,#00897b);margin-top:8px;">
+              کپی کارنامه 📋
+            </button>
+          </div>
+
+          <div class="learn-more-box">
+            <strong>برای یادگیری بیشتر:</strong><br>
+            <a class="learn-more-btn" href="https://www.google.com/search?q=%D8%A2%D9%85%D9%88%D8%B2%D8%B4%20%D8%A7%D8%B9%D8%B4%D8%A7%D8%B1%20%DA%A9%D9%84%D8%A7%D8%B3%20%DA%86%D9%87%D8%A7%D8%B1%D9%85" target="_blank" rel="noopener">
+              باز کردن گوگل: آموزش اعشار کلاس چهارم 🔎
+            </a>
+          </div>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    let playerName = "بازیکن عزیز";
+    let currentStage = 0;
+    let currentHintIndex = 0;
+    let soundEnabled = true;
+    let musicEnabled = false;
+    let audioCtx = null;
+    let musicTimer = null;
+    let audioUnlocked = false;
+
+    const stages = [
+      {
+        title: "قطار عددهای اعشاری", stationIcon: "🚂", stationLabel: "مرحله ۱", npc: { name: "دانا", face: "🤓" },
+        startMessage: "در این مرحله باید الگوی حرکت قطار را پیدا کنی.",
+        question: "روی واگن‌های قطار این عددها نوشته شده است: ۰/۳ ، ۰/۶ ، ۰/۹ ، ؟ عدد مناسب برای واگن آخر کدام است؟",
+        options: ["۱/۰", "۱/۱", "۱/۲", "۱/۳"], correct: "۱/۲",
+        success: "آفرین! الگو را درست پیدا کردی. هر بار ۰/۳ به عدد قبلی اضافه شده است.",
+        error: "هنوز درست نیست. به فاصله بین عددهای پشت سر هم نگاه کن.",
+        hints: ["اول بررسی کن هر عدد نسبت به عدد قبلی چقدر تغییر کرده است.", "از ۰/۳ به ۰/۶ مقدار ۰/۳ اضافه شده و از ۰/۶ به ۰/۹ هم ۰/۳ اضافه شده است.", "پس باید به ۰/۹ هم ۰/۳ اضافه کنیم. ۰/۹ + ۰/۳ = ۱/۲. پاسخ درست ۱/۲ است."],
+        renderVisual: () => `<div class="train math-ltr"><div class="engine">🚂</div><div class="arrow-connector">➡️</div><div class="wagon">۰/۳</div><div class="arrow-connector">➡️</div><div class="wagon">۰/۶</div><div class="arrow-connector">➡️</div><div class="wagon">۰/۹</div><div class="arrow-connector">➡️</div><div class="wagon unknown" id="answerVisual">؟</div></div>`,
+        revealAnswer: () => { const el = document.getElementById("answerVisual"); if (el) { el.textContent = "۱/۲"; el.classList.remove("unknown"); } }
+      },
+      {
+        title: "پل مقایسه", stationIcon: "🌉", stationLabel: "مرحله ۲", npc: { name: "نیکا", face: "😊" },
+        startMessage: "با دقت به دو عدد نگاه کن و رابطه درست را پیدا کن.",
+        question: "برای عبور از پل، باید رابطه درست بین ۰/۵ و ۰/۵۰ را انتخاب کنی. کدام گزینه درست است؟",
+        options: ["۰/۵ > ۰/۵۰", "۰/۵ < ۰/۵۰", "۰/۵ = ۰/۵۰", "نمی‌توان مقایسه کرد"], correct: "۰/۵ = ۰/۵۰",
+        success: "آفرین! ۰/۵ و ۰/۵۰ با هم برابرند، چون صفر پایانی مقدار عدد را تغییر نمی‌دهد.",
+        error: "دوباره فکر کن. صفر پایانی در بخش اعشاری همیشه مقدار عدد را عوض نمی‌کند.",
+        hints: ["به این فکر کن که آیا صفر پایانی بعد از رقم‌های اعشاری همیشه مقدار را تغییر می‌دهد؟", "عدد ۰/۵ را می‌توان به شکل ۰/۵۰ نیز نوشت. هر دو یعنی پنج‌دهم.", "پس ۰/۵ و ۰/۵۰ برابرند. پاسخ درست: ۰/۵ = ۰/۵۰."],
+        renderVisual: () => `<div class="bridge-box"><div class="bridge"></div><div class="compare-display math-ltr"><span>۰/۵</span><span class="blank" id="answerVisual">؟</span><span>۰/۵۰</span></div></div>`,
+        revealAnswer: () => { const el = document.getElementById("answerVisual"); if (el) el.textContent = "="; }
+      },
+      {
+        title: "فروشگاه ریاضی", stationIcon: "🛒", stationLabel: "مرحله ۳", npc: { name: "روبی", face: "🤖" },
+        startMessage: "در این فروشگاه باید مجموع قیمت‌ها را حساب کنی.",
+        question: "قیمت یک برچسب ۰/۴ سکه و قیمت یک بادکنک ۰/۳ سکه است. مجموع قیمت آن‌ها چقدر می‌شود؟",
+        options: ["۰/۶", "۰/۷", "۰/۸", "۱/۰"], correct: "۰/۷",
+        success: "عالی بود! ۰/۴ + ۰/۳ = ۰/۷. چهار‌دهم و سه‌دهم روی هم می‌شود هفت‌دهم.",
+        error: "کمی دیگر فکر کن. چهار‌دهم و سه‌دهم را با هم جمع کن.",
+        hints: ["هر دو عدد فقط بخش دهم دارند. پس دهم‌ها را با هم جمع کن.", "۰/۴ یعنی چهار‌دهم و ۰/۳ یعنی سه‌دهم.", "چهار‌دهم + سه‌دهم = هفت‌دهم. پس پاسخ درست ۰/۷ است."],
+        renderVisual: () => `<div class="shop-box"><div class="shop-items"><div class="shop-item"><span class="emoji">🏷️</span>برچسب: ۰/۴</div><div class="shop-item"><span class="emoji">🎈</span>بادکنک: ۰/۳</div></div><div class="sum-line math-ltr">۰/۴ + ۰/۳ = <span id="answerVisual">؟</span></div></div>`,
+        revealAnswer: () => { const el = document.getElementById("answerVisual"); if (el) el.textContent = "۰/۷"; }
+      },
+      {
+        title: "محور عددها", stationIcon: "📏", stationLabel: "مرحله ۴", npc: { name: "دانا", face: "🤓" },
+        startMessage: "در این مرحله باید جای درست یک عدد را روی محور پیدا کنی. دقت کن که صفرِ محور در سمت چپ قرار دارد.",
+        question: "روی محور زیر، کدام نقطه نمایانگر عدد ۰/۸ است؟",
+        options: ["الف", "ب", "پ", "ت"], correct: "پ",
+        success: "آفرین! نقطه «پ» نزدیک ۰/۸ روی محور قرار دارد.",
+        error: "هنوز درست نیست. بین ۰ و ۱ فاصله را به ده قسمت مساوی در نظر بگیر.",
+        hints: ["عدد ۰/۸ یعنی هشت‌دهم؛ یعنی هشت قسمت از ده قسمت بین ۰ و ۱.", "روی محور، صفر از سمت چپ شروع می‌شود و عددها به سمت راست بزرگ‌تر می‌شوند.", "نقطه‌ای که نزدیک هشت‌دهم قرار گرفته، «پ» است. پس پاسخ درست «پ» است."],
+        renderVisual: () => `<div class="line-box"><div class="number-line"><div class="base"></div><div class="tick" style="left:0%;"></div><div class="tick-label" style="left:0%;">۰</div><div class="tick" style="left:20%;"></div><div class="point" style="left:20%;"><div class="dot"></div>الف</div><div class="tick" style="left:50%;"></div><div class="point" style="left:50%;"><div class="dot"></div>ب</div><div class="tick" style="left:80%;"></div><div class="point" style="left:80%;"><div class="dot"></div>پ</div><div class="tick" style="left:100%;"></div><div class="point" style="left:100%;"><div class="dot"></div>ت</div><div class="tick-label" style="left:100%;">۱</div></div></div>`,
+        revealAnswer: () => {}
+      },
+      {
+        title: "چرخ ارزش مکانی", stationIcon: "🎡", stationLabel: "مرحله ۵", npc: { name: "نیکا", face: "😊" },
+        startMessage: "حالا به رقم‌های عدد اعشاری دقت کن و ارزش مکانی آن‌ها را پیدا کن.",
+        question: "در عدد ۳/۴۷، رقم ۴ چه ارزشی دارد؟",
+        options: ["چهار صدم", "چهار دهم", "چهار یکان", "چهار دهگان"], correct: "چهار دهم",
+        success: "درست است! در عدد ۳/۴۷، رقم ۴ در جایگاه دهم قرار دارد.",
+        error: "دوباره نگاه کن. رقم بلافاصله بعد از ممیز در جایگاه دهم قرار می‌گیرد.",
+        hints: ["در اعداد اعشاری، اولین رقم بعد از ممیز نشان‌دهنده دهم است.", "در ۳/۴۷، رقم ۴ اولین رقم بعد از ممیز است.", "پس رقم ۴ ارزش «چهار دهم» دارد."],
+        renderVisual: () => `<div class="wheel-box"><div class="math-ltr" style="font-size:34px;font-weight:bold;color:#d84315;">۳/۴۷</div><div class="wheel-row"><div class="digit-card">۳<br><small>یکان</small></div><div class="digit-card">۴<br><small>دهم</small></div><div class="digit-card">۷<br><small>صدم</small></div></div></div>`,
+        revealAnswer: () => {}
+      },
+      {
+        title: "ماهیگیری اعشاری", stationIcon: "🐟", stationLabel: "مرحله ۶", npc: { name: "روبی", face: "🤖" },
+        startMessage: "در این استخر باید عدد اعشاری درست را شکار کنی.",
+        question: "کدام عدد نشان‌دهنده «هفت‌دهم» است؟",
+        options: ["۰/۷", "۰/۰۷", "۷/۰", "۰/۱۷"], correct: "۰/۷",
+        success: "آفرین! هفت‌دهم به صورت ۰/۷ نوشته می‌شود.",
+        error: "اشتباه شد. به این فکر کن که هفت‌دهم فقط یک رقم بعد از ممیز دارد.",
+        hints: ["هفت‌دهم یعنی ۷ قسمت از ۱۰ قسمت.", "وقتی فقط دهم داریم، فقط یک رقم بعد از ممیز نوشته می‌شود.", "پس هفت‌دهم برابر با ۰/۷ است."],
+        renderVisual: () => `<div class="pond-box"><div class="pond-items math-ltr"><div class="fish-card"><span class="emoji">🐠</span>۰/۷</div><div class="fish-card"><span class="emoji">🐟</span>۰/۰۷</div><div class="fish-card"><span class="emoji">🐡</span>۷/۰</div></div><div style="font-weight:bold;color:#006064;">ماهیِ درست را انتخاب کن!</div></div>`,
+        revealAnswer: () => {}
+      },
+      {
+        title: "باغ مرتب‌سازی", stationIcon: "🌷", stationLabel: "مرحله ۷", npc: { name: "دانا", face: "🤓" },
+        startMessage: "گل‌های باغ را از کوچک به بزرگ مرتب کن.",
+        question: "کدام گزینه ترتیب درست این اعداد از کوچک به بزرگ است؟ پاسخ را از سمت چپ به راست بخوان: ۰/۹ ، ۰/۴ ، ۰/۷۵",
+        options: ["۰/۴ → ۰/۷۵ → ۰/۹", "۰/۹ → ۰/۷۵ → ۰/۴", "۰/۷۵ → ۰/۴ → ۰/۹", "۰/۴ → ۰/۹ → ۰/۷۵"],
+        correct: "۰/۴ → ۰/۷۵ → ۰/۹",
+        success: "خیلی خوب! ترتیب درست از سمت چپ به راست این است: ۰/۴ → ۰/۷۵ → ۰/۹.",
+        error: "اشتباه شد. رقم‌های دهم و سپس صدم را با دقت مقایسه کن.",
+        hints: ["ابتدا رقم دهم را در هر عدد مقایسه کن.", "۰/۴ کوچک‌تر از ۰/۷۵ و ۰/۹ است؛ چون ۴ دهم از ۷ دهم و ۹ دهم کوچک‌تر است.", "بین ۰/۷۵ و ۰/۹، عدد ۰/۷۵ کوچک‌تر است. پس ترتیب درست از سمت چپ به راست: ۰/۴ → ۰/۷۵ → ۰/۹."],
+        renderVisual: () => `<div class="garden-box"><div class="garden-row math-ltr"><div class="flower">🌷 ۰/۹</div><div class="flower">🌼 ۰/۴</div><div class="flower">🌹 ۰/۷۵</div></div><div style="margin-top:12px;font-weight:bold;color:#33691e;">گل‌ها را از سمت چپ به راست، از کوچک به بزرگ مرتب کن.</div></div>`,
+        revealAnswer: () => {}
+      },
+      {
+        title: "خانه تفریق", stationIcon: "🏠", stationLabel: "مرحله ۸", npc: { name: "نیکا", face: "😊" },
+        startMessage: "در این خانه باید یک تفریق اعشاری ساده را حل کنی.",
+        question: "اگر ۰/۹ سکه داشته باشی و ۰/۲ سکه خرج کنی، چند سکه باقی می‌ماند؟",
+        options: ["۰/۵", "۰/۶", "۰/۷", "۱/۱"], correct: "۰/۷",
+        success: "آفرین! ۰/۹ - ۰/۲ = ۰/۷.",
+        error: "دوباره فکر کن. نه‌دهم منهای دو‌دهم چند دهم می‌شود؟",
+        hints: ["هر دو عدد در بخش دهم هستند.", "۰/۹ یعنی نه‌دهم و ۰/۲ یعنی دو‌دهم.", "نه‌دهم منهای دو‌دهم می‌شود هفت‌دهم. پس پاسخ درست ۰/۷ است."],
+        renderVisual: () => `<div class="house-box"><div style="font-size:52px;">🏠</div><div class="sub-line math-ltr">۰/۹ - ۰/۲ = <span id="answerVisual">؟</span></div></div>`,
+        revealAnswer: () => { const el = document.getElementById("answerVisual"); if (el) el.textContent = "۰/۷"; }
+      },
+      {
+        title: "دروازه معادل‌ها", stationIcon: "🚪", stationLabel: "مرحله ۹", npc: { name: "روبی", face: "🤖" },
+        startMessage: "در این مرحله باید عدد معادل را تشخیص بدهی.",
+        question: "کدام عدد با ۰/۲۵ برابر است؟",
+        options: ["۰/۲۵", "۰/۲۰۵", "۰/۵۲", "۲/۵"], correct: "۰/۲۵",
+        success: "درست است! ۰/۲۵ فقط با خودش برابر است و گزینه‌های دیگر مقدارهای متفاوتی دارند.",
+        error: "هنوز درست نشده است. به رقم‌های دهم و صدم دقت کن.",
+        hints: ["۰/۲۵ یعنی دو دهم و پنج صدم.", "اگر جای رقم‌ها عوض شود یا ممیز جابه‌جا شود، مقدار عدد تغییر می‌کند.", "پس عددی که دقیقاً با ۰/۲۵ برابر است، همان ۰/۲۵ است."],
+        renderVisual: () => `<div class="gate-box"><div class="gate">🚪</div><div class="equiv-display math-ltr"><span>۰/۲۵</span><span>=</span><span class="blank">؟</span></div></div>`,
+        revealAnswer: () => {}
+      },
+      {
+        title: "چالش نهایی", stationIcon: "🏆", stationLabel: "مرحله ۱۰", npc: { name: "دانا", face: "🤓" },
+        startMessage: "مرحله آخر رسید! حالا یک چالش ترکیبی را حل کن.",
+        question: "حاصل ۰/۴ + ۰/۵ کدام است؟",
+        options: ["۰/۸", "۰/۹", "۱/۰", "۰/۷"], correct: "۰/۹",
+        success: "عالی بود! ۰/۴ + ۰/۵ = ۰/۹. تو مرحله نهایی را هم با موفقیت تمام کردی.",
+        error: "اشکالی ندارد. چهار‌دهم و پنج‌دهم را دوباره با هم جمع کن.",
+        hints: ["هر دو عدد در بخش دهم هستند.", "چهار‌دهم + پنج‌دهم یعنی ۴ دهم + ۵ دهم.", "۴ دهم + ۵ دهم = ۹ دهم. پس پاسخ درست ۰/۹ است."],
+        renderVisual: () => `<div class="final-box"><div class="final-stars">⭐🏆⭐</div><div class="challenge-display math-ltr"><span>۰/۴</span><span>+</span><span>۰/۵</span><span>=</span><span class="blank" id="answerVisual">؟</span></div></div>`,
+        revealAnswer: () => { const el = document.getElementById("answerVisual"); if (el) el.textContent = "۰/۹"; }
+      }
+    ];
+
+    const stats = stages.map(() => ({
+      attempts: 0,
+      hints: new Set(),
+      status: "انجام نشده",
+      score: 0,
+      stars: 0,
+      completed: false
+    }));
+
+    function toPersianNumber(value) {
+      const digits = ["۰","۱","۲","۳","۴","۵","۶","۷","۸","۹"];
+      return String(value).replace(/[0-9]/g, d => digits[d]);
+    }
+
+    function updateSoundStatus(message) {
+      const status = document.getElementById("soundStatus");
+      if (status) status.textContent = message;
+    }
+
+    function getAudioContext() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      return audioCtx;
+    }
+
+    async function unlockAudio() {
+      try {
+        const ctx = getAudioContext();
+
+        if (ctx.state === "suspended") {
+          await ctx.resume();
+        }
+
+        // اجرای یک صدای بسیار کوتاه و کم‌حجم برای باز کردن قفل صدای موبایل
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.frequency.value = 440;
+        osc.type = "sine";
+        gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.03);
+
+        audioUnlocked = true;
+        updateSoundStatus("وضعیت صدا: فعال شد ✅");
+        return true;
+      } catch (error) {
+        audioUnlocked = false;
+        updateSoundStatus("وضعیت صدا: فعال نشد ❌");
+        return false;
+      }
+    }
+
+    async function unlockAudioManually() {
+      const ok = await unlockAudio();
+      if (ok) {
+        soundEnabled = true;
+        testSound();
+        alert("صدا فعال شد. حالا صدای کلیک، پاسخ درست و پاسخ غلط باید کار کند.");
+      } else {
+        alert("صدا فعال نشد. لطفاً مطمئن شو گوشی روی حالت بی‌صدا نیست و صدای رسانه زیاد است.");
+      }
+    }
+
+    function playTone(freq, duration = 0.12, type = "sine", volume = 0.06, delay = 0, force = false) {
+      if (!force && !soundEnabled && !musicEnabled) return;
+
+      const ctx = getAudioContext();
+
+      // در موبایل اگر صدا هنوز قفل باشد، تابع بدون خطا خارج می‌شود
+      if (ctx.state === "suspended") {
+        ctx.resume().catch(() => {});
+      }
+
+      try {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, ctx.currentTime + delay);
+
+        gain.gain.setValueAtTime(0.0001, ctx.currentTime + delay);
+        gain.gain.exponentialRampToValueAtTime(volume, ctx.currentTime + delay + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + delay + duration);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(ctx.currentTime + delay);
+        osc.stop(ctx.currentTime + delay + duration + 0.03);
+      } catch (error) {
+        console.log("Audio error:", error);
+      }
+    }
+
+    async function ensureAudioThen(callback) {
+      if (!audioUnlocked || (audioCtx && audioCtx.state === "suspended")) {
+        await unlockAudio();
+      }
+      if (callback) callback();
+    }
+
+    function playClick() {
+      if (!soundEnabled) return;
+      ensureAudioThen(() => playTone(520, 0.07, "triangle", 0.06, 0, true));
+    }
+
+    function playCorrect() {
+      if (!soundEnabled) return;
+      ensureAudioThen(() => {
+        playTone(523, 0.12, "sine", 0.08, 0, true);
+        playTone(659, 0.12, "sine", 0.08, 0.12, true);
+        playTone(784, 0.18, "sine", 0.08, 0.24, true);
+        if (navigator.vibrate) navigator.vibrate([40, 30, 40]);
+      });
+    }
+
+    function playWrong() {
+      if (!soundEnabled) return;
+      ensureAudioThen(() => {
+        playTone(220, 0.13, "sawtooth", 0.055, 0, true);
+        playTone(180, 0.15, "sawtooth", 0.055, 0.15, true);
+        if (navigator.vibrate) navigator.vibrate(120);
+      });
+    }
+
+    function playStage() {
+      if (!soundEnabled) return;
+      ensureAudioThen(() => {
+        playTone(784, 0.09, "triangle", 0.07, 0, true);
+        playTone(988, 0.11, "triangle", 0.07, 0.11, true);
+      });
+    }
+
+    function testSound() {
+      soundEnabled = true;
+      ensureAudioThen(() => {
+        playTone(392, 0.10, "triangle", 0.08, 0, true);
+        playTone(523, 0.10, "triangle", 0.08, 0.12, true);
+        playTone(659, 0.16, "triangle", 0.08, 0.24, true);
+      });
+    }
+
+    function startMusicLoop() {
+      if (musicTimer) clearInterval(musicTimer);
+
+      const melody = [392, 440, 494, 523, 494, 440, 392, 330];
+      let i = 0;
+
+      musicTimer = setInterval(() => {
+        if (!musicEnabled) return;
+
+        ensureAudioThen(() => {
+          const freq = melody[i % melody.length];
+          playTone(freq, 0.16, "triangle", 0.025, 0, true);
+          i++;
+        });
+      }, 430);
+    }
+
+    async function toggleMusicFromStart() {
+      await unlockAudio();
+      musicEnabled = !musicEnabled;
+      soundEnabled = true;
+
+      if (musicEnabled) {
+        startMusicLoop();
+        updateSoundStatus("وضعیت صدا: فعال شد | موسیقی روشن است 🎵");
+      } else {
+        updateSoundStatus("وضعیت صدا: فعال شد | موسیقی خاموش است");
+      }
+
+      testSound();
+    }
+
+    async function toggleMusic() {
+      await unlockAudio();
+      musicEnabled = !musicEnabled;
+
+      if (musicEnabled) {
+        startMusicLoop();
+      }
+
+      playClick();
+    }
+
+    async function toggleSound() {
+      await unlockAudio();
+      soundEnabled = !soundEnabled;
+
+      if (soundEnabled) {
+        updateSoundStatus("وضعیت صدا: روشن ✅");
+        testSound();
+      } else {
+        updateSoundStatus("وضعیت صدا: خاموش");
+      }
+    }
+
+    async function startGame() {
+      const input = document.getElementById("playerNameInput");
+      const name = input.value.trim();
+      if (!name) {
+        alert("لطفاً نام و نام خانوادگی بازیکن را وارد کن.");
+        input.focus();
+        return;
+      }
+
+      await unlockAudio();
+      if (musicEnabled) startMusicLoop();
+      playStage();
+
+      playerName = name;
+      document.getElementById("startScreen").style.display = "none";
+      document.getElementById("gameArea").style.display = "block";
+      document.getElementById("playerChip").textContent = "👤 بازیکن: " + playerName;
+      createMap();
+      renderStage();
+    }
+
+    function createMap() {
+      const mapRow = document.getElementById("mapRow");
+      mapRow.innerHTML = "";
+      stages.forEach((stage, index) => {
+        const station = document.createElement("div");
+        station.className = "station";
+        station.id = "station" + index;
+        station.innerHTML = `<div class="icon">${stage.stationIcon}</div><small>${stage.stationLabel}</small><div class="mini-stars" id="miniStars${index}">☆☆☆</div>`;
+        mapRow.appendChild(station);
+
+        if (index < stages.length - 1) {
+          const c = document.createElement("div");
+          c.className = "connector";
+          mapRow.appendChild(c);
+        }
+      });
+
+      const lastConn = document.createElement("div");
+      lastConn.className = "connector";
+      mapRow.appendChild(lastConn);
+
+      const finalStation = document.createElement("div");
+      finalStation.className = "station";
+      finalStation.id = "stationFinal";
+      finalStation.innerHTML = `<div class="icon">🎊</div><small>پایان بازی</small>`;
+      mapRow.appendChild(finalStation);
+    }
+
+    function updateMap() {
+      stages.forEach((_, index) => {
+        const el = document.getElementById("station" + index);
+        el.classList.remove("active", "done");
+        if (index < currentStage) el.classList.add("done");
+        if (index === currentStage) el.classList.add("active");
+
+        const mini = document.getElementById("miniStars" + index);
+        if (mini) mini.textContent = starsText(stats[index].stars, true);
+      });
+
+      const finalEl = document.getElementById("stationFinal");
+      finalEl.classList.remove("active", "done");
+
+      if (currentStage >= stages.length) {
+        stages.forEach((_, index) => document.getElementById("station" + index).classList.add("done"));
+        finalEl.classList.add("active");
+      }
+
+      const completed = stats.filter(s => s.completed).length;
+      const percent = Math.round((completed / stages.length) * 100);
+      document.getElementById("progressFill").style.width = percent + "%";
+      document.getElementById("progressText").textContent = "پیشرفت: " + toPersianNumber(percent) + "٪";
+    }
+
+    function totalScore() {
+      return stats.reduce((sum, s) => sum + s.score, 0);
+    }
+
+    function updateTopCounters() {
+      if (currentStage < stages.length) {
+        document.getElementById("stageCount").textContent = toPersianNumber(currentStage + 1);
+        document.getElementById("attemptCount").textContent = toPersianNumber(stats[currentStage].attempts);
+        document.getElementById("hintCount").textContent = toPersianNumber(stats[currentStage].hints.size);
+      }
+      document.getElementById("totalScoreView").textContent = toPersianNumber(totalScore());
+    }
+
+    function personalize(text) {
+      return playerName + " عزیز، " + text;
+    }
+
+    function renderStage() {
+      const stage = stages[currentStage];
+      currentHintIndex = 0;
+
+      updateTopCounters();
+
+      document.getElementById("stageBadge").textContent = "مرحله " + toPersianNumber(currentStage + 1) + " از ۱۰";
+      document.getElementById("stageStarsLive").textContent = "☆☆☆";
+      document.getElementById("questionTitle").textContent = stage.title;
+      document.getElementById("questionText").textContent = personalize(stage.question);
+      document.getElementById("visualBox").innerHTML = stage.renderVisual();
+      document.getElementById("feedbackBox").className = "feedback";
+      document.getElementById("feedbackBox").textContent = "";
+      document.getElementById("awardBox").classList.remove("show");
+      document.getElementById("hintPanel").classList.remove("show");
+      document.getElementById("reportBox").classList.remove("show");
+
+      document.getElementById("npcFace").textContent = stage.npc.face;
+      document.getElementById("npcName").textContent = stage.npc.name;
+      document.getElementById("npcMessage").textContent = playerName + " عزیز، " + stage.startMessage;
+
+      renderOptions(stage.options);
+
+      const nextBtn = document.getElementById("nextBtn");
+      nextBtn.style.display = "none";
+      nextBtn.textContent = currentStage === stages.length - 1 ? "گزارش نهایی" : "مرحله بعد";
+
+      updateMap();
+      showHint(false);
+    }
+
+    function renderOptions(options) {
+      const box = document.getElementById("optionsBox");
+      box.innerHTML = "";
+      options.forEach(option => {
+        const btn = document.createElement("button");
+        btn.className = "option-btn";
+        if (option.includes("→")) {
+          btn.classList.add("math-ltr");
+          btn.style.direction = "ltr";
+          btn.style.unicodeBidi = "isolate";
+        }
+        btn.textContent = option;
+        btn.onclick = () => {
+          playClick();
+          checkAnswer(btn, option);
+        };
+        box.appendChild(btn);
+      });
+    }
+
+    function disableOptions() {
+      document.querySelectorAll(".option-btn").forEach(btn => btn.disabled = true);
+    }
+
+    function calculateAward(stat) {
+      const attempts = stat.attempts;
+      const hints = stat.hints.size;
+
+      if (attempts === 1 && hints === 0) return { stars: 3, score: 100 };
+      if (attempts <= 2 && hints <= 1) return { stars: 2, score: 75 };
+      return { stars: 1, score: 45 };
+    }
+
+    function starsText(count, small = false) {
+      if (count === 3) return small ? "★★★" : "⭐⭐⭐";
+      if (count === 2) return small ? "★★☆" : "⭐⭐☆";
+      if (count === 1) return small ? "★☆☆" : "⭐☆☆";
+      return small ? "☆☆☆" : "☆☆☆";
+    }
+
+    function checkAnswer(button, selected) {
+      const stage = stages[currentStage];
+      const stat = stats[currentStage];
+
+      if (stat.completed) return;
+
+      stat.attempts += 1;
+      updateTopCounters();
+
+      const feedback = document.getElementById("feedbackBox");
+
+      if (selected === stage.correct) {
+        stat.status = "درست";
+        stat.completed = true;
+        const award = calculateAward(stat);
+        stat.stars = award.stars;
+        stat.score = award.score;
+
+        button.classList.add("correct");
+        stage.revealAnswer();
+
+        feedback.className = "feedback success";
+        feedback.textContent = playerName + " عزیز، " + stage.success;
+
+        document.getElementById("awardStars").textContent = starsText(stat.stars);
+        document.getElementById("awardText").textContent = "امتیاز این مرحله: " + toPersianNumber(stat.score);
+        document.getElementById("awardBox").classList.add("show");
+        document.getElementById("stageStarsLive").textContent = starsText(stat.stars);
+
+        document.getElementById("npcName").textContent = "نیکا";
+        document.getElementById("npcFace").textContent = "🎉";
+        document.getElementById("npcMessage").textContent = playerName + " عزیز، آفرین! " + toPersianNumber(stat.score) + " امتیاز گرفتی و " + starsText(stat.stars) + " دریافت کردی.";
+
+        disableOptions();
+        document.getElementById("nextBtn").style.display = "inline-block";
+        updateTopCounters();
+        updateMap();
+        playCorrect();
+        launchConfetti();
+      } else {
+        stat.status = "نیاز به تلاش بیشتر";
+        button.classList.add("wrong");
+        feedback.className = "feedback error";
+        feedback.textContent = playerName + " عزیز، " + stage.error;
+
+        document.getElementById("npcName").textContent = "روبی";
+        document.getElementById("npcFace").textContent = "🤖";
+        document.getElementById("npcMessage").textContent = playerName + " عزیز، اشکالی ندارد. دوباره تلاش کن یا از دکمه راهنما کمک بگیر.";
+
+        playWrong();
+        setTimeout(() => button.classList.remove("wrong"), 900);
+      }
+    }
+
+    function openHint() {
+      playClick();
+      document.getElementById("hintPanel").classList.add("show");
+      showHint(true);
+
+      document.getElementById("npcName").textContent = "دانا";
+      document.getElementById("npcFace").textContent = "💡";
+      document.getElementById("npcMessage").textContent = playerName + " عزیز، راهنماها از کلی به دقیق‌تر می‌روند. قدم‌به‌قدم جلو برو.";
+    }
+
+    function closeHint() {
+      playClick();
+      document.getElementById("hintPanel").classList.remove("show");
+    }
+
+    function showHint(shouldCount) {
+      const stage = stages[currentStage];
+      document.getElementById("hintLevel").textContent = "راهنمای سطح " + toPersianNumber(currentHintIndex + 1);
+      document.getElementById("hintText").textContent = playerName + " عزیز، " + stage.hints[currentHintIndex];
+      document.getElementById("prevHintBtn").disabled = currentHintIndex === 0;
+      document.getElementById("nextHintNavBtn").disabled = currentHintIndex === stage.hints.length - 1;
+
+      if (shouldCount) {
+        stats[currentStage].hints.add(currentHintIndex + 1);
+        updateTopCounters();
+      }
+    }
+
+    function nextHint() {
+      playClick();
+      if (currentHintIndex < stages[currentStage].hints.length - 1) {
+        currentHintIndex++;
+        showHint(true);
+      }
+    }
+
+    function prevHint() {
+      playClick();
+      if (currentHintIndex > 0) {
+        currentHintIndex--;
+        showHint(true);
+      }
+    }
+
+    function goNext() {
+      playStage();
+      if (currentStage < stages.length - 1) {
+        currentStage++;
+        renderStage();
+      } else {
+        showFinalReport();
+      }
+    }
+
+    function showFinalReport() {
+      currentStage = stages.length;
+      updateMap();
+
+      const totalAttempts = stats.reduce((sum, s) => sum + s.attempts, 0);
+      const totalHints = stats.reduce((sum, s) => sum + s.hints.size, 0);
+      const completed = stats.filter(s => s.completed).length;
+      const score = totalScore();
+      const totalStars = stats.reduce((sum, s) => sum + s.stars, 0);
+
+      document.getElementById("stageCount").textContent = "پایان";
+      document.getElementById("attemptCount").textContent = toPersianNumber(totalAttempts);
+      document.getElementById("hintCount").textContent = toPersianNumber(totalHints);
+      document.getElementById("totalScoreView").textContent = toPersianNumber(score);
+
+      document.getElementById("stageBadge").textContent = "پایان بازی";
+      document.getElementById("stageStarsLive").textContent = "🏆";
+      document.getElementById("questionTitle").textContent = playerName + " عزیز، تبریک! همه بازی‌های کوچک را انجام دادی";
+      document.getElementById("questionText").textContent = "تو ۱۰ بازی کوچک این شهربازی را طی کردی. حالا گزارش کامل عملکردت را ببین.";
+      document.getElementById("visualBox").innerHTML = `<div class="final-box"><div class="final-stars">🎊🏆🎊</div><div style="font-size:20px;font-weight:bold;color:#5d4037;">امتیاز کل: ${toPersianNumber(score)} | ستاره‌ها: ${toPersianNumber(totalStars)}</div></div>`;
+      document.getElementById("optionsBox").innerHTML = "";
+      document.getElementById("feedbackBox").className = "feedback success";
+      document.getElementById("feedbackBox").textContent = playerName + " عزیز، عالی بود! مسیر خط‌چین شهربازی را کامل طی کردی.";
+      document.getElementById("nextBtn").style.display = "none";
+      document.getElementById("hintPanel").classList.remove("show");
+      document.getElementById("awardBox").classList.remove("show");
+
+      document.getElementById("npcName").textContent = "نیکا";
+      document.getElementById("npcFace").textContent = "🏆";
+      document.getElementById("npcMessage").textContent = playerName + " عزیز، به پایان شهربازی رسیدی. آفرین به دقت، پشتکار و تلاش تو!";
+
+      document.getElementById("reportTitle").textContent = "گزارش نهایی عملکرد";
+      document.getElementById("reportPlayerName").textContent = "نام بازیکن: " + playerName;
+      document.getElementById("reportCompleted").textContent = toPersianNumber(completed);
+      document.getElementById("reportScore").textContent = toPersianNumber(score);
+      document.getElementById("reportStars").textContent = toPersianNumber(totalStars) + " از ۳۰";
+      document.getElementById("reportAttempts").textContent = toPersianNumber(totalAttempts);
+
+      const table = document.getElementById("reportTable");
+      table.innerHTML = "";
+
+      stats.forEach((s, i) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${toPersianNumber(i + 1)}</td>
+          <td>${toPersianNumber(s.attempts)}</td>
+          <td>${toPersianNumber(s.hints.size)}</td>
+          <td>${toPersianNumber(s.score)}</td>
+          <td>${starsText(s.stars)}</td>
+        `;
+        table.appendChild(row);
+      });
+
+      document.getElementById("reportBox").classList.add("show");
+      playCorrect();
+      setTimeout(launchConfetti, 400);
+    }
+
+    function restartGame() {
+      playClick();
+      currentStage = 0;
+      currentHintIndex = 0;
+      stats.forEach(s => {
+        s.attempts = 0;
+        s.hints.clear();
+        s.status = "انجام نشده";
+        s.score = 0;
+        s.stars = 0;
+        s.completed = false;
+      });
+      renderStage();
+    }
+
+    function launchConfetti() {
+      const colors = ["#ffca28", "#26a69a", "#42a5f5", "#ef5350", "#ab47bc", "#66bb6a"];
+      for (let i = 0; i < 42; i++) {
+        const piece = document.createElement("div");
+        piece.className = "confetti";
+        piece.style.left = Math.random() * 100 + "vw";
+        piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+        piece.style.animationDuration = (1.5 + Math.random() * 1.7) + "s";
+        piece.style.transform = "rotate(" + Math.random() * 360 + "deg)";
+        piece.style.borderRadius = Math.random() > .5 ? "50%" : "2px";
+        document.body.appendChild(piece);
+        setTimeout(() => piece.remove(), 3600);
+      }
+    }
+
+    // نصب اپلیکیشن
+    function installApp() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(function(choiceResult) {
+          if (choiceResult.outcome === 'accepted') {
+            document.getElementById('installBanner').style.display = 'none';
+          }
+          deferredPrompt = null;
+        });
+      }
+    }
+
+    document.getElementById("playerNameInput").addEventListener("keydown", function(event) {
+      if (event.key === "Enter") startGame();
+    });
+
+    // ثبت Service Worker برای نصب به‌عنوان اپلیکیشن
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('./sw.js').catch(function(err) {
+          console.log('SW registration failed: ', err);
+        });
+      });
+    }
+
+    // نمایش دکمه نصب اپلیکیشن
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', function(e) {
+      e.preventDefault();
+      deferredPrompt = e;
+      const installBanner = document.getElementById('installBanner');
+      if (installBanner) installBanner.style.display = 'block';
+    });
+
+    function buildReportEmailText() {
+      const totalAttempts = stats.reduce((sum, s) => sum + s.attempts, 0);
+      const totalHints = stats.reduce((sum, s) => sum + s.hints.size, 0);
+      const completed = stats.filter(s => s.completed).length;
+      const score = totalScore();
+      const totalStars = stats.reduce((sum, s) => sum + s.stars, 0);
+
+      let lines = [];
+      lines.push("کارنامه بازی شهربازی عددهای اعشاری");
+      lines.push("----------------------------------");
+      lines.push("نام و نام خانوادگی دانش‌آموز: " + playerName);
+      lines.push("طراح بازی: مهناز مسعودنیا");
+      lines.push("تعداد مرحله‌های کامل‌شده: " + completed + " از " + stages.length);
+      lines.push("امتیاز کل: " + score);
+      lines.push("ستاره‌های کل: " + totalStars + " از 30");
+      lines.push("تعداد کل تلاش‌ها: " + totalAttempts);
+      lines.push("تعداد کل راهنماها: " + totalHints);
+      lines.push("");
+      lines.push("جزئیات عملکرد مرحله‌ها:");
+      lines.push("");
+
+      stats.forEach((s, i) => {
+        lines.push(
+          "مرحله " + (i + 1) +
+          " | تلاش: " + s.attempts +
+          " | راهنما: " + s.hints.size +
+          " | امتیاز: " + s.score +
+          " | ستاره: " + s.stars
+        );
+      });
+
+      lines.push("");
+      lines.push("یادآوری: دانش‌آموز باید از صفحه نتایج نیز اسکرین‌شات بگیرد و برای معلم ارسال کند.");
+      return lines.join("\n");
+    }
+
+    function sendReportEmail() {
+      playClick();
+
+      const subject = "کارنامه بازی اعشار - " + playerName;
+      const body = buildReportEmailText();
+      const to = "masoudnia68@gmail.com";
+
+      // روش ۱: mailto - بهترین روش برای موبایل (باز می‌کند هر اپ ایمیل نصب‌شده)
+      const mailtoUrl =
+        "mailto:" + to +
+        "?subject=" + encodeURIComponent(subject) +
+        "&body=" + encodeURIComponent(body);
+
+      // تشخیص نوع دستگاه
+      const isMobile = /Android|iPhone|iPad|iPod|Opera Mini|IEMobile/i.test(navigator.userAgent);
+
+      if (isMobile) {
+        // در موبایل: مستقیم mailto باز کن (اپ ایمیل پیش‌فرض باز می‌شود)
+        window.location.href = mailtoUrl;
+      } else {
+        // در دسکتاپ: اول Gmail وب را امتحان کن، اگر بلاک شد mailto
+        const gmailUrl =
+          "https://mail.google.com/mail/?view=cm&fs=1" +
+          "&to=" + encodeURIComponent(to) +
+          "&su=" + encodeURIComponent(subject) +
+          "&body=" + encodeURIComponent(body);
+
+        const newWin = window.open(gmailUrl, "_blank");
+
+        // اگر پنجره باز نشد (popup blocked)، از mailto استفاده کن
+        setTimeout(function() {
+          if (!newWin || newWin.closed || typeof newWin.closed === "undefined") {
+            window.location.href = mailtoUrl;
+          }
+        }, 800);
+      }
+    }
+
+    function copyReportToClipboard() {
+      playClick();
+      const text = buildReportEmailText();
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function() {
+          alert("کارنامه کپی شد! حالا می‌توانی آن را در هر اپ پیام‌رسان یا ایمیل جای‌گذاری (Paste) کنی.");
+        }).catch(function() {
+          fallbackCopy(text);
+        });
+      } else {
+        fallbackCopy(text);
+      }
+    }
+
+    function fallbackCopy(text) {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try {
+        document.execCommand("copy");
+        alert("کارنامه کپی شد! حالا می‌توانی آن را در هر اپ ایمیل یا پیام‌رسان جای‌گذاری کنی.");
+      } catch(e) {
+        alert("کپی انجام نشد. لطفاً از دکمه ارسال ایمیل استفاده کن.");
+      }
+      document.body.removeChild(ta);
+    }
+
+
+  </script>
+</body>
+</html>

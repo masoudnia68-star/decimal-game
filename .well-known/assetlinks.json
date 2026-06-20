@@ -1,1 +1,15 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "ir.masoudnia.decimalgame",
+      "sha256_cert_fingerprints": [
+        "C9:FD:46:67:CB:E8:81:A7:4E:DA:BA:94:A9:2A:BE:0C:A5:38:14:70:A5:FF:82:D4:AC:1E:74:0F:5E:C9:F4:4F"
+      ]
+    }
+  }
+]
 
